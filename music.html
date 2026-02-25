@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Artiste | Ma Musique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0d0b08;
+            --bg2: #13110e;
+            --cream: #e8dcc8;
+            --gold: #c9a84c;
+            --gold2: #f0d080;
+            --rust: #a8421a;
+            --olive: #4a5a2a;
+            --text: #e8dcc8;
+            --muted: rgba(232, 220, 200, 0.4);
+            --border: rgba(201, 168, 76, 0.2);
+        }
+
+        body {
+            font-family: 'DM Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px 60px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.045;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Background warm gradient */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 80% 60% at 10% 100%, rgba(168,66,26,0.07) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ── VINYL SPINNING ── */
+        .vinyl-wrap {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin-bottom: 28px;
+        }
+
+        .vinyl {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 50% 50%, #222 0%, #111 20%, #1a1a1a 21%, #0d0d0d 40%, #1c1c1c 41%, #090909 60%, #181818 61%, #0a0a0a 80%, #141414 81%, #060606 100%);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.05),
+                0 20px 60px rgba(0,0,0,0.8),
+                inset 0 0 30px rgba(0,0,0,0.5);
+            animation: spin 8s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vinyl-grooves {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at 50% 50%, transparent 20%, rgba(255,255,255,0.015) 21%, transparent 22%);
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .vinyl-label {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--rust));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #000;
+            text-align: center;
+            line-height: 1.2;
+            position: relative;
+            z-index: 2;
+            animation: spin-reverse 8s linear infinite;
+        }
+
+        @keyframes spin-reverse {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+
+        .needle {
+            position: absolute;
+            top: -10px;
+            right: -24px;
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, #888, #ccc, #888);
+            border-radius: 2px;
+            transform-origin: right center;
+            transform: rotate(-35deg);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .needle::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+
+        /* ── PROFILE ── */
+        .container {
+            width: 100%;
+            max-width: 460px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .artist-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5rem;
+            letter-spacing: 4px;
+            line-height: 1;
+            color: var(--cream);
+            text-shadow: 0 0 40px rgba(201,168,76,0.3);
+            margin-bottom: 4px;
+        }
+
+        .genre-tag {
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            border: 1px solid var(--border);
+            padding: 4px 14px;
+            border-radius: 2px;
+            margin-bottom: 14px;
+        }
+
+        .bio {
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            font-style: italic;
+            max-width: 300px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ── NOW PLAYING ── */
+        .now-playing {
+            width: 100%;
+            background: rgba(201,168,76,0.06);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 20px;
+        }
+
+        .bar {
+            width: 3px;
+            background: var(--gold);
+            border-radius: 1px;
+            animation: barAnim 0.8s ease-in-out infinite alternate;
+        }
+        .bar:nth-child(1) { animation-delay: 0s; height: 6px; }
+        .bar:nth-child(2) { animation-delay: 0.15s; height: 14px; }
+        .bar:nth-child(3) { animation-delay: 0.3s; height: 10px; }
+        .bar:nth-child(4) { animation-delay: 0.1s; height: 18px; }
+        .bar:nth-child(5) { animation-delay: 0.25s; height: 8px; }
+
+        @keyframes barAnim {
+            from { transform: scaleY(0.3); }
+            to { transform: scaleY(1); }
+        }
+
+        .np-text {
+            flex: 1;
+        }
+
+        .np-label {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 2px;
+        }
+
+        .np-track {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--cream);
+        }
+
+        /* ── SEPARATOR ── */
+        .sep {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sep-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .sep-text {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* ── PLATFORMS GRID ── */
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .platform-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 18px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--platform-color, var(--gold));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .platform-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .platform-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: var(--platform-color, var(--gold));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .p-icon { font-size: 1.6rem; }
+
+        .p-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--cream);
+        }
+
+        .p-sub {
+            font-size: 0.68rem;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        /* Spotify green */
+        .card-spotify { --platform-color: #1db954; }
+        .card-apple   { --platform-color: #fc3c44; }
+        .card-yt      { --platform-color: #ff0000; }
+        .card-sc      { --platform-color: #ff7700; }
+        .card-deezer  { --platform-color: #a238ff; }
+        .card-band    { --platform-color: #1da0c3; }
+
+        /* ── LINKS ── */
+        .links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-row {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.015);
+        }
+
+        .link-row:hover {
+            border-color: rgba(201,168,76,0.5);
+            background: rgba(201,168,76,0.05);
+            padding-left: 26px;
+        }
+
+        .l-icon {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .l-body { flex: 1; }
+
+        .l-title {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--cream);
+            margin-bottom: 2px;
+        }
+
+        .l-desc {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .l-arrow {
+            color: var(--gold);
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+
+        .link-row:hover .l-arrow { transform: translateX(4px); }
+
+        /* ── SOCIAL ROW ── */
+        .socials {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .soc-btn {
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 8px 16px;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .soc-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Entrance animation */
+        .container > * {
+            opacity: 0;
+            transform: translateY(16px);
+            animation: enter 0.6s ease forwards;
+        }
+        .container > *:nth-child(1) { animation-delay: 0.05s; }
+        .container > *:nth-child(2) { animation-delay: 0.15s; }
+        .container > *:nth-child(3) { animation-delay: 0.25s; }
+        .container > *:nth-child(4) { animation-delay: 0.35s; }
+        .container > *:nth-child(5) { animation-delay: 0.40s; }
+        .container > *:nth-child(6) { animation-delay: 0.45s; }
+        .container > *:nth-child(7) { animation-delay: 0.50s; }
+        .container > *:nth-child(8) { animation-delay: 0.55s; }
+        .container > *:nth-child(9) { animation-delay: 0.60s; }
+
+        @keyframes enter {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 400px) {
+            .platforms { grid-template-columns: 1fr; }
+            .artist-name { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- VINYL + PROFILE -->
+    <div class="profile">
+        <div class="vinyl-wrap">
+            <div class="vinyl">
+                <div class="vinyl-grooves"></div>
+                <div class="vinyl-label">LADO<br>A<br>2024</div>
+            </div>
+            <div class="needle"></div>
+        </div>
+
+        <h1 class="artist-name">Leon Silva</h1>
+        <div class="genre-tag">Jazz · Soul · Électro</div>
+        <p class="bio">
+            "Je compose des nuits que tu n'as pas encore vécues."<br>
+            📍 Lyon — Disponible pour concerts & collabs
+        </p>
+    </div>
+
+    <!-- NOW PLAYING -->
+    <div class="now-playing">
+        <div class="bars">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="np-text">
+            <div class="np-label">▶ En écoute</div>
+            <div class="np-track">Minuit Doré — EP Vol.2</div>
+        </div>
+        <span style="font-size:0.75rem;color:var(--muted);">03:42</span>
+    </div>
+
+    <!-- SÉPARATEUR STREAMING -->
+    <div class="sep">
+        <div class="sep-line"></div>
+        <div class="sep-text">Écouter ma musique</div>
+        <div class="sep-line"></div>
+    </div>
+
+    <!-- PLATEFORMES -->
+    <div class="platforms">
+        <a href="https://spotify.com" class="platform-card card-spotify" target="_blank">
+            <div class="p-icon">🎧</div>
+            <div class="p-name">Spotify</div>
+            <div class="p-sub">@leon.silva</div>
+        </a>
+        <a href="https://music.apple.com" class="platform-card card-apple" target="_blank">
+            <div class="p-icon">🍎</div>
+            <div class="p-name">Apple Music</div>
+            <div class="p-sub">Leon Silva</div>
+        </a>
+        <a href="https://youtube.com" class="platform-card card-yt" target="_blank">
+            <div class="p-icon">▶️</div>
+            <div class="p-name">YouTube</div>
+            <div class="p-sub">Leon Silva Official</div>
+        </a>
+        <a href="https://soundcloud.com" class="platform-card card-sc" target="_blank">
+            <div class="p-icon">☁️</div>
+            <div class="p-name">SoundCloud</div>
+            <div class="p-sub">leon-silva-music</div>
+        </a>
+        <a href="https://deezer.com" class="platform-card card-deezer" target="_blank">
+            <div class="p-icon">🎵</div>
+            <div class="p-name">Deezer</div>
+            <div class="p-sub">Leon Silva</div>
+        </a>
+        <a href="https://bandcamp.com" class="platform-card card-band" target="_blank">
+            <div class="p-icon">💿</div>
+            <div class="p-name">Bandcamp</div>
+            <div class="p-sub">Acheter / Support</div>
+        </a>
+    </div>
+
+    <!-- SÉPARATEUR LIENS -->
+    <div class="sep">
+        <div class="sep-line"></div>
+        <div class="sep-text">Liens</div>
+        <div class="sep-line"></div>
+    </div>
+
+    <!-- LIENS SECONDAIRES -->
+    <div class="links">
+        <a href="#" class="link-row">
+            <div class="l-icon">🎤</div>
+            <div class="l-body">
+                <div class="l-title">Réserver pour un Concert</div>
+                <div class="l-desc">Disponibilités & tarifs · Pro uniquement</div>
+            </div>
+            <div class="l-arrow">→</div>
+        </a>
+        <a href="#" class="link-row">
+            <div class="l-icon">🎼</div>
+            <div class="l-body">
+                <div class="l-title">Ma Discographie Complète</div>
+                <div class="l-desc">Albums, EPs & singles depuis 2018</div>
+            </div>
+            <div class="l-arrow">→</div>
+        </a>
+        <a href="#" class="link-row">
+            <div class="l-icon">📽️</div>
+            <div class="l-body">
+                <div class="l-title">Clip Officiel — Minuit Doré</div>
+                <div class="l-desc">Nouveau clip · 2024</div>
+            </div>
+            <div class="l-arrow">→</div>
+        </a>
+        <a href="#" class="link-row">
+            <div class="l-icon">📧</div>
+            <div class="l-body">
+                <div class="l-title">Contact Presse & Management</div>
+                <div class="l-desc">booking@leonsilva.com</div>
+            </div>
+            <div class="l-arrow">→</div>
+        </a>
+    </div>
+
+    <!-- RÉSEAUX SOCIAUX -->
+    <div class="socials">
+        <a href="https://instagram.com" class="soc-btn" target="_blank">📸 Instagram</a>
+        <a href="https://tiktok.com" class="soc-btn" target="_blank">🎵 TikTok</a>
+        <a href="https://twitter.com" class="soc-btn" target="_blank">𝕏 Twitter</a>
+        <a href="https://facebook.com" class="soc-btn" target="_blank">👥 Facebook</a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>© 2026 · Leon Silva · Tous droits réservés</p>
+    </div>
+
+</div>
+
+</body>
+</html>
